@@ -5,13 +5,24 @@ import hogs from "../porkers_data";
 import HelloWorld from "./HelloWorld";
 import Container from "./Container"
 import Filter from './Filter'
+
 class App extends Component {
 
   state = {
     hogs: hogs,
     filter: false,
     byName: false,
-    byWeight: false
+    byWeight: false,
+    backUp: hogs
+  }
+
+  hideHog = (hog) => {
+    const arrayToRender = this.state.hogs.filter(obj => obj.name !== hog.name)
+    this.setState({hogs: arrayToRender})
+  }
+
+  showAll = () => {
+    this.setState({hogs: this.state.backUp})
   }
 
   changeFilter = () => {
@@ -46,7 +57,7 @@ class App extends Component {
   }
 
   filteredByWeight = (hogsArray) => {
-    if (this.state.byName) {
+    if (this.state.byWeight) {
       return [...hogsArray].sort((a, b) => (a.weight > b.weight) ? 1 : -1)
     } else {
       return hogsArray
@@ -57,6 +68,7 @@ class App extends Component {
     const nameFiltered = this.filteredByName(this.state.hogs)
     const greaseFiltered = this.filteredByGreased(nameFiltered)
     const weightFiltered = this.filteredByWeight(greaseFiltered)
+    // debugger
     return weightFiltered
   }
 
@@ -65,8 +77,9 @@ class App extends Component {
       <div className="App">
         <Nav />
         <HelloWorld />
-        <Filter changeFilter={this.changeFilter} sortByName={this.sortByName} sortByWeight={this.sortByWeight}/>
-        <Container hogs={this.hogsToRender()} />
+        <Filter changeFilter={this.changeFilter} showAll={this.showAll}
+        sortByName={this.sortByName} sortByWeight={this.sortByWeight}/>
+        <Container hogs={this.hogsToRender()} hideHog={this.hideHog} />
       </div>
     );
   }
